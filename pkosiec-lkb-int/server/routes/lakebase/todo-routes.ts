@@ -19,10 +19,15 @@ const CREATE_TABLE_SQL = `
   )
 `;
 
+const CREATE_INDEXES_SQL = `
+  CREATE INDEX IF NOT EXISTS idx_todos_created_at ON todos (created_at DESC)
+`;
+
 const CreateTodoBody = z.object({ title: z.string().min(1) });
 
 export async function setupSampleLakebaseRoutes(appkit: AppKitWithLakebase) {
   await appkit.lakebase.query(CREATE_TABLE_SQL);
+  await appkit.lakebase.query(CREATE_INDEXES_SQL);
 
   appkit.server.extend((app) => {
     app.get('/api/lakebase/todos', async (_req, res) => {
